@@ -11,6 +11,21 @@
  */
 (function ($) {
 
+  // private state constants
+  var BLUR = 0, // field is empty & unfocused
+      FOCUS = 1, // field is empty & focused
+      NOT_EMPTY = 2; // field is not empty
+  
+  // private transitions -- same for all instances
+  var t = function(from, to) { return (from << 3) | to; },
+      transitions = {};
+  transitions[t( FOCUS, BLUR )]      = function(base) { base.fadeTo(1.0); };
+  transitions[t( NOT_EMPTY, BLUR )]  = function(base) { base.$label.css({opacity: 1.0}).show(); };
+  transitions[t( BLUR, FOCUS )]      = function(base) { base.fadeTo(base.options.fadeOpacity); };
+  transitions[t( NOT_EMPTY, FOCUS )] = function(base) { base.$label.css({opacity: base.options.fadeOpacity}).show(); };
+  transitions[t( BLUR, NOT_EMPTY )]  = function(base) { base.$label.hide(); };
+  transitions[t( FOCUS, NOT_EMPTY )] = transitions[t( BLUR, NOT_EMPTY )];
+
   $.InFieldLabels = function (label, field, options) {
     // To avoid scope issues, use 'base' instead of 'this'
     // to reference this class from internal events and functions.
@@ -23,91 +38,57 @@
     base.$field = $(field);
     base.field  = field;
 
-    base.$label.data("InFieldLabels", base);
-    base.showing = true;
+    base.$label.data('InFieldLabels', base);
+    base.state = BLUR;
 
     base.init = function () {
       // Merge supplied options with default options
       base.options = $.extend({}, $.InFieldLabels.defaultOptions, options);
 
-      // Check if the field is already filled in
-      if (base.$field.val() !== "") {
-        base.$label.hide();
-        base.showing = false;
+      if (base.options.inlineClass) {
+        base.$label.addClass(base.options.inlineClass);
       }
 
-      base.$field.focus(function () {
-        base.fadeOnFocus();
-      }).blur(function () {
-        base.checkForEmpty(true);
-      }).bind('keydown.infieldlabel', function (e) {
-        // Use of a namespace (.infieldlabel) allows us to
-        // unbind just this method later
-        base.hideOnChange(e);
-      }).bind('paste', function (e) {
-        // Since you can not paste an empty string we can assume
-        // that the fieldis not empty and the label can be cleared.
-        base.setOpacity(0.0);
-      }).change(function (e) {
-        base.checkForEmpty();
-      }).bind('onPropertyChange', function () {
-        base.checkForEmpty();
-      });
+      base.$field.focus(base.onFocus).blur(base.onBlur)
+        // is(':focus') is costlier
+        .on('change keyup paste', base.updateState);
+      
+      base.updateState();
     };
 
-    // If the label is currently showing
-    // then fade it down to the amount
-    // specified in the settings
-    base.fadeOnFocus = function () {
-      if (base.showing) {
-        base.setOpacity(base.options.fadeOpacity);
-      }
-    };
 
-    base.setOpacity = function (opacity) {
+    base.fadeTo = function (opacity) {
       base.$label.stop().animate({ opacity: opacity }, base.options.fadeDuration);
-      base.showing = (opacity > 0.0);
     };
 
-    // Checks for empty as a fail safe
-    // set blur to true when passing from
-    // the blur event
-    base.checkForEmpty = function (blur) {
-      if (base.$field.val() === "") {
-        base.prepForShow();
-        base.setOpacity(blur ? 1.0 : base.options.fadeOpacity);
-      } else {
-        base.setOpacity(0.0);
+    base.onFocus = function (e) {
+      base.setState(base.field.value === '' ? FOCUS : NOT_EMPTY);
+    }
+    base.onBlur = function (e) {
+      base.setState(base.field.value === '' ? BLUR : NOT_EMPTY);
+    }
+
+    base.updateState = function (e, nl) {
+      var state = NOT_EMPTY;
+      if (base.field.value === '') {
+        state = base.$field.is(':focus') ? FOCUS : BLUR;
       }
+      base.setState(state, nl);
     };
 
-    base.prepForShow = function (e) {
-      if (!base.showing) {
-        // Prepare for a animate in...
-        base.$label.css({opacity: 0.0}).show();
-
-        // Reattach the keydown event
-        base.$field.bind('keydown.infieldlabel', function (e) {
-          base.hideOnChange(e);
-        });
-      }
-    };
-
-    base.hideOnChange = function (e) {
-      if (
-          (e.keyCode === 16) || // Skip Shift
-          (e.keyCode === 9) // Skip Tab
-        ) {
-        return; 
+    base.setState = function (state, nl) {
+      if (state === base.state) {
+        return;
       }
 
-      if (base.showing) {
-        base.$label.hide();
-        base.showing = false;
+      var transition = transitions[t(base.state, state)];
+      if (typeof transition === 'function') {
+        transition(base);
+        base.state = state;
+      } else { // unkown transition - shouldn't happen
+        // nl avoids looping
+        nl || base.updateState(null, true);
       }
-
-      // Remove keydown event to save on CPU processing
-      base.$field.unbind('keydown.infieldlabel');
     };
 
     // Run the initialization method
@@ -116,7 +97,8 @@
 
   $.InFieldLabels.defaultOptions = {
     fadeOpacity: 0.5, // Once a field has focus, how transparent should the label be
-    fadeDuration: 300 // How long should it take to animate from 1.0 opacity to the fadeOpacity
+    fadeDuration: 300, // How long should it take to animate from 1.0 opacity to the fadeOpacity
+    inlineClass: 'in-field' // CSS class to apply to the label when it gets in-field
   };
 
 
@@ -141,6 +123,8 @@
       } else if (field.tagName !== 'TEXTAREA') {
         valid = false;
       }
+      
+      valid = valid && !field.getAttribute('placeholder');
 
       if (!valid) {
         return; // Again, nothing to attach
