@@ -125,28 +125,29 @@
       // Find input or textarea based on for= attribute
       // The for attribute on the label must contain the ID
       // of the input or textarea element
-      var for_attr = $(this).attr('for'), $field;
+      var for_attr = $(this).attr('for'), field, valid = true;
       if (!for_attr) {
         return; // Nothing to attach, since the for field wasn't used
       }
 
       // Find the referenced input or textarea element
-      $field = $(
-        "input#" + for_attr + "[type='text']," + 
-        "input#" + for_attr + "[type='search']," + 
-        "input#" + for_attr + "[type='tel']," + 
-        "input#" + for_attr + "[type='url']," + 
-        "input#" + for_attr + "[type='email']," + 
-        "input#" + for_attr + "[type='password']," + 
-        "textarea#" + for_attr
-      );
+      field = document.getElementById(for_attr);
+      if (!field) {
+        return;
+      }
 
-      if ($field.length === 0) {
+      if (field.tagName === 'INPUT') {
+        valid = /^(?:text|search|number|tel|url|email|password)?$/.test(field.type.toLowerCase());
+      } else if (field.tagName !== 'TEXTAREA') {
+        valid = false;
+      }
+
+      if (!valid) {
         return; // Again, nothing to attach
       } 
 
       // Only create object for input[text], input[password], or textarea
-      (new $.InFieldLabels(this, $field[0], options));
+      (new $.InFieldLabels(this, field, options));
     });
   };
 
