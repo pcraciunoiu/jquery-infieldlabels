@@ -47,8 +47,8 @@
       // Merge supplied options with default options
       base.options = $.extend({}, $.InFieldLabels.defaultOptions, options);
 
-      if (base.options.inlineClass) {
-        base.$label.addClass(base.options.inlineClass);
+      if (base.options.labelClass) {
+        base.$label.addClass(base.options.labelClass);
       }
       if (base.options.disableAutocomplete) {
         base.$field.attr('autocomplete', 'off');
@@ -122,7 +122,7 @@
     disableAutocomplete: true, // Disable autocomplete on the matched fields
     fadeOpacity: 0.5, // Once a field has focus, how transparent should the label be
     fadeDuration: 300, // How long should it take to animate from 1.0 opacity to the fadeOpacity
-    inlineClass: 'in-field' // CSS class to apply to the label when it gets in-field
+    labelClass: 'in-field' // CSS class to apply to the label when it gets in-field
   };
 
 
