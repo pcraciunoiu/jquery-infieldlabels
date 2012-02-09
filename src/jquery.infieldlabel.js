@@ -104,10 +104,13 @@
 
   $.fn.inFieldLabels = function (options) {
     return this.each(function () {
+      if (this.tagName !== 'LABEL') {
+        return;
+      }
       // Find input or textarea based on for= attribute
       // The for attribute on the label must contain the ID
       // of the input or textarea element
-      var for_attr = $(this).attr('for'), field, valid = true;
+      var for_attr = this.getAttribute('for'), field, valid = true;
       if (!for_attr) {
         return; // Nothing to attach, since the for field wasn't used
       }
