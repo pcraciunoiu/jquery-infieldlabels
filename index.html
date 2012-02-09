@@ -1,78 +1,170 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-	<title>dcneiner/In-Field-Labels-jQuery-Plugin @ GitHub</title>
-	
-	<style type="text/css">
-		body {
-  		margin-top: 1.0em;
-  		background-color: #019232;
-		  font-family: "helvetica"; 
-  		color: #ffffff;
-    }
-    #container {
-      margin: 0 auto;
-      width: 700px;
-    }
-		h1 { font-size: 3.8em; color: #fe6dcd; margin-bottom: 3px; }
-		h1 .small { font-size: 0.4em; }
-		h1 a { text-decoration: none }
-		h2 { font-size: 1.5em; color: #fe6dcd; }
-    h3 { text-align: center; color: #fe6dcd; }
-    a { color: #fe6dcd; }
-    .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
-    .download { float: right; }
-		pre { background: #000; color: #fff; padding: 15px;}
-    hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
-    .footer { text-align:center; padding-top:30px; font-style: italic; }
-	</style>
-	
+  <title>In-Field Labels jQuery Plugin</title>
+  <link rel="stylesheet" href="css/layout.css" type="text/css" media="all" charset="utf-8" />
+  
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+  <script src="https://raw.github.com/streetpc/jquery-infieldlabels/master/src/jquery.infieldlabel.min.js" type="text/javascript" charset="utf-8"></script>
+  
+  <script type="text/javascript" charset="utf-8">
+    $(function(){ $("label").inFieldLabels(); });
+  </script>
+  <!--[if lte IE 6]>
+    <style type="text/css" media="screen">
+      form label {
+          background: #fff;
+      }
+    </style>
+  <![endif]-->
 </head>
 
 <body>
-  <a href="http://github.com/dcneiner/In-Field-Labels-jQuery-Plugin"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
+  <a href="http://github.com/streetpc/jquery-infieldlabels/" title="Fork me on GitHub"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
+
+  <h1>In-Field Labels jQuery Plugin</h1>
+  <div id="header">
+    <p><strong>License:</strong> <a href="http://docs.jquery.com/License">Same as jQuery (Dual GPL + MIT)</a></p>
+      <p><strong>Authors:</strong> <a href="http://pixelgraphics.us/company/">Doug Neiner</a>, <a href="http://instanceof.me/">Adrien Lavoillotte</a></p>
+      <p><strong>Download:</strong> <a href="https://github.com/streetpc/jquery-infieldlabels/zipball/master">InFieldLabels.zip</a></p>
+      <p><strong>Source:</strong> <a href="https://github.com/streetpc/jquery-infieldlabels/">GitHub</a></p>
+      <p><strong>Size:</strong> Under 1KB Minified and gzipped</p>
+      <p><strong>Overview:</strong><br />
+      This is a simple plugin that turns properly formatted HTML forms into
+      forms with in-field label support. Labels fade when the field is focussed and disappear
+      when text entry begins. Clearing a field brings back the label.</p>
+      <p><strong>Browser Support:</strong><br />IE6+, WebKit Browsers (Safari, Chrome), Firefox 2+ <small>* IE6 requires a background-color be set on the label to match the background of the field.</small><br />
+      <a href="http://jquery.com">jQuery</a> 1.6+ is required.</p>
+      <p><strong>Known Issues:</strong><br />
+      Browser Auto-Complete can cause problems in hiding the labels. Less of an issue for Login Boxes, but much more of an issue with comment forms. This is why the plugin disables Auto-Complete by default (configurable, see the <code>disableAutocomplete</code> option).<br />
+      Selecting the text and then right-click &gt; delete is not supported. If you really need to support it, the <a href="http://stackoverflow.com/questions/1481152/jquery-how-to-detect-a-textboxs-content-has-changed">only true, cross-browser way</a> would be to check the field every <em>n</em> milliseconds:</p>
+<pre>// after plugin is called
+var labels = $('label.in-field');
+window.setInterval(function(){
+  labels.each(function(){
+    $.data(this, 'InFieldLabels').updateState();
+  });
+}, 100);</pre>
+      <p>If you do this, I recommend to set the <code>emptyWatch</code> option to <code>false</code>.</p>
+    </p>
+  </div>
+  <div class="body"><h2>Samples</h2></div>
+  <form action="index.html" method="get" accept-charset="utf-8">
+    <fieldset>
+      <legend>Comment Form</legend>
+      <p>
+        <label for="name">Name</label><br />
+        <input type="text" name="name" value="" id="name">
+      </p>
+      <p>
+        <label for="email">Email</label><br />
+        <input type="text" name="email" value="" id="email">
+      </p>
+      <p>
+        <label for="website">Website</label><br />
+        <input type="text" name="website" value="" id="website">
+      </p>
+      <p>
+        <label for="comment">Comment</label><br />
+        <textarea cols="30" rows="10" name="comment" id="comment"></textarea>
+      </p>
+    </fieldset>
+    <p><input type="submit" value="Continue &rarr;"></p>
+  </form>
   
-  <div id="container">
-
-    <div class="download">
-      <a href="http://github.com/dcneiner/In-Field-Labels-jQuery-Plugin/zipball/master">
-        <img border="0" width="90" src="http://github.com/images/modules/download/zip.png"></a>
-      <a href="http://github.com/dcneiner/In-Field-Labels-jQuery-Plugin/tarball/master">
-        <img border="0" width="90" src="http://github.com/images/modules/download/tar.png"></a>
-    </div>
+  <form action="index.html" method="get" accept-charset="utf-8">
+    <fieldset>
+      <legend>Login Form</legend>
+      <p>
+        <label for="username">Username</label><br />
+        <input type="text" name="username" value="" id="username">
+      </p>
+      <p>
+        <label for="password">Password</label><br />
+        <input type="password" name="password" value="" id="password">
+      </p>
+    </fieldset>
+    <p><input type="submit" value="Continue &rarr;"></p>
+  </form>
+  <div class="body">
+    <h2>Use</h2>
+    <p><strong>HTML</strong>:
+      <pre>
+&lt;p&gt;
+  &lt;label for=&quot;field_id&quot;&gt;Label Text&lt;/label&gt;&lt;br /&gt;
+  &lt;input type=&quot;text&quot; name=&quot;field_id&quot; value=&quot;&quot;
+  id=&quot;field_id&quot;&gt;
+&lt;/p&gt;</pre>
+    </p>
+    <p><strong>CSS</strong>:<br />
+      More CSS is needed to position the label nicely over the input or text area element, but since it all depends on how you have styled those elements, only the bare-bones are listed here. Keep in mind any block element can surround the label and input field. <strong>&lt;p&gt;</strong> is used as an example.
+    <pre>
+form p { position:relative }
+label.in-field { position:absolute; top:0; left:0; cursor:text }</pre>  
+    </p>
+    <p><strong>Javascript</strong>:<br />
+    <pre>
+$(document).ready(function(){
+  $("label").inFieldLabels();
+});</pre> 
       
-    <h1><a href="http://github.com/dcneiner/In-Field-Labels-jQuery-Plugin">In-Field-Labels-jQuery-Plugin</a> 
-      <span class="small">by <a href="http://github.com/dcneiner">dcneiner</a></span></h1>
+    </p>
 
-    <div class="description">
-      This is a simple plugin that turns properly formatted HTML forms into forms with in-field label support. Labels fade when the field is focussed and disappear when text entry begins. Clearing a field and leaving brings back the label.
-    </div>
+    <h2>Options</h2>
+    <p>Five options can be passed along with the method or set ahead of time for all inFieldLabel controls.</p>
+    <p>To set them ahead of time, use the following syntax:
+      <pre>
+$.inFieldLabels.defaultOptions.optionName = "";</pre>
+    </p>
+    <p>To pass them at call time, use the following syntax:
+      <pre>
+$("label").inFieldLabels({ optionName: value });</pre>
+      </p>
+    <p><code>fadeOpacity:</code> <strong>Value between 0.1 and 1.0.</strong><br />When a field is focussed, its label is animated to this opacity. Defaults to <code>0.5</code></p>
+<p><code>fadeDuration:</code> <strong>Time in milliseconds</strong><br />When an animation occurs, it uses this setting to determine duration. Defaults to <code>300</code></p>
+<p><code>labelClass:</code> <strong>String (CSS class to be applied to the label)</strong><br />When the label becomes in-field, this class is applied to the label. This allows fallback styling for label that will not be in-field, for various reasons (inelligible, JavaScript is disabled, an error occured…). Defaults to 'in-field'</p>
+<p><code>disableAutocomplete:</code> <strong>Boolean</strong><br />If <code>true</code>, disable browser auto-complete: the matching field gets <code>autocomplete=off</code>, which prevents some overlay errors when the field is still focused. Defaults to <code>true</code></p>
+<p><code>emptyWatch:</code> <strong>Boolean</strong><br />If <code>true</code>, keep watching the field as the user types. This allows the plugin to bring back the label as soon as it is empty, which prevents some overlay errors when the field is still focused. Defaults to <code>true</code></p>
 
-    <h2>Contact</h2>
-<p>Douglas Neiner (doug@pixelgraphics.us)<br/>      </p>
-
+    <h2>Changelog</h2>
+    <p><strong>Version 0.2</strong>, by <a href="http://instanceof.me/">Adrien Lavoillotte</a> (<a href="http://github.com/streetpc/">streetpc</a>)</p>
+    <ul>
+      <li>Refactored the plugin into a state machine with unified event handling and transitions.</li>
+      <li>Faster selection and invalidation, supports IDs with special characters.</li>
+      <li>Added support for different CSS styling, <tt>labelClass</tt> option. <em>Special thanks to <a href="http://www.viget.com/inspire/a-better-jquery-in-field-label-plugin/">Trevor Davis</a> (<a href="https://github.com/davist11/">davist11</a>) for this idea.</em></li>
+      <li>Restore label as soon as the field is empty, <tt>emptyWatch</tt> option, support for a <tt>cut</tt> event.</li>
+      <li>Less cases for autocomplete bug (keyup), plus <tt>disableAutocomplete</tt> option.</li>
+      <li>Avoid placeholder overlap.</li>
+      <li>Added support for other HTML5 text fields: <tt>number</tt>, <tt>date</tt>, <tt>time</tt>, <tt>datetime</tt>, <tt>datetime-local</tt>, <tt>month</tt>, <tt>week</tt>.</li>
+    </ul>
+    <p><strong>Version 0.1.2</strong></p>
+    <ul>
+      <li>Added support for a <tt>paste</tt> event. <em>Special thanks to <a href="http://github.com/esumerfd">Ed Sumerfield (esumerfd)</a> for contributing this improvement.</em></li>
+    </ul>
+    <p><strong>Version 0.1.1</strong></p>
+    <ul>
+      <li>Added support for HTML5 text fields: <tt>search</tt>, <tt>tel</tt>, <tt>url</tt>, <tt>email</tt>. <em>Special thanks to <a href="http://github.com/holizz">Tom Adams (holizz)</a> for contributing this improvement.</em></li>
+    </ul>
+    <p><strong>Version 0.1</strong></p>
+    <ul>
+      <li>Initial Release</li>
+    </ul>
+    <h2> To Do</h2>
+    <ul>
+      <li><a href="http://instanceof.me/post/15394689493/safari-placeholder-better-than-the-w3c-specs">“À la Safari” placeholder</a> polyfill if the browser doesn't support placeholders. Technically the same behavior, so we could just wrap the matched field, prepend a <code>&lt;label&gt;</code> and apply the plugin.</li>
+      <li>Detect Safari and inject the <code>label</code> content into the <code>placeholder</code> attribute of the targeted field, since a native implementation will be faster and cleaner.</li>
+      <li>Offer a <code>setInterval</code> implementation, with automatic label collecting and no keyup (un)binding.</li>
+      <li>Legacy jQuery support (and possibly performance gain) by setting a flag (say, <code>base.focus</code>) to <code>true</code> on focus and to <code>false</code> on blur. Use this flag instead of the <code>base.$field.is(':focus')</code> test. The rest of the code should work with jQuery 1.4+, maybe even 1.3+.</li>
+    </ul>
 
     <h2>Download</h2>
-    <p>
-      You can download this project in either
-      <a href="http://github.com/dcneiner/In-Field-Labels-jQuery-Plugin/zipball/master">zip</a> or
-      <a href="http://github.com/dcneiner/In-Field-Labels-jQuery-Plugin/tarball/master">tar</a> formats.
-    </p>
-    <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
-      by running:
-      <pre>$ git clone git://github.com/dcneiner/In-Field-Labels-jQuery-Plugin</pre>
-    </p>
-      
-    <div class="footer">
-      get the source code on GitHub : <a href="http://github.com/dcneiner/In-Field-Labels-jQuery-Plugin">dcneiner/In-Field-Labels-jQuery-Plugin</a>
-    </div>
-    
+    <ul>
+      <li><strong>Source:</strong> <a href="https://github.com/streetpc/jquery-infieldlabels/">Github</a></li>
+      <li><strong>Zip:</strong> <a href="https://github.com/streetpc/jquery-infieldlabels/zipball/master">InFieldLabels.zip</a></li>
+    </ul>
   </div>
-
-  
 </body>
 </html>
