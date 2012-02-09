@@ -1,16 +1,16 @@
 h1. In-Field Labels jQuery Plugin
 
-*Version:* 0.1.2
+*Version:* 0.2.0
 
 *License:* "Same as jQuery (Dual GPL + MIT)":http://docs.jquery.com/License
 
-*Author:* "Doug Neiner":http://pixelgraphics.us/company
+*Authors:* "Doug Neiner":http://pixelgraphics.us/company, "Adrien Lavoillotte":http://instanceof.me/
 
 *Size:* Under 1KB Minified and gzipped
 
 h2. Overview
 
-This is a simple plugin that turns properly formatted HTML forms into forms with in-field label support. Labels fade when the field is focussed and disappear when text entry begins. Clearing a field and leaving brings back the label.
+This is a simple plugin that turns properly formatted HTML forms into forms with in-field label support. Labels fade when the field is focussed and disappear when text entry begins. Clearing a field brings back the label.
 
 h2. Browser Support
 
@@ -18,9 +18,21 @@ IE6+, WebKit Browsers (Safari, Chrome), Firefox 2+
 
 &#42; IE6 requires a background-color be set on the label to match the background of the field.
 
+"jQuery":http://jquery.com 1.6+ is required.
+
 h2. Known Issues
 
-Browser Auto-Complete can cause problems in hiding the labels. Less of an issue for Login Boxes, but much more of an issue with comment forms.
+Browser Auto-Complete can cause problems in hiding the labels. Less of an issue for Login Boxes, but much more of an issue with comment forms. This is why the plugin disables Auto-Complete by default (configurable, see the <code>disableAutocomplete</code> option).
+
+Selecting the text and then right-click &gt; delete is not supported. If you really need to support it, the "only true, cross-browser way":http://stackoverflow.com/questions/1481152/jquery-how-to-detect-a-textboxs-content-has-changed would be to check the field every _n_ milliseconds:
+
+<pre>
+// after plugin is called
+var labels = $('label.in-field');
+window.setInterval(function(){ labels.each(function(){ $.data(this, 'InFieldLabels').updateState(); }) }, 100);
+</pre>
+
+If you do this, I recommend to set the <code>emptyWatch</code> option to <code>false</code>.
 
 h2. Use
 
@@ -39,20 +51,20 @@ More CSS is needed to position the label nicely over the input or text area elem
 
 <pre>
 form p { position:relative }
-label  { position:absolute; top:0; left:0}
+label.in-field { position:absolute; top:0; left:0; cursor:text }
 </pre>
 
 h3. Javascript
 
 <pre>
-$(document).ready(function(){
+$(function(){
   $("label").inFieldLabels();
 });
 </pre>
 
 h2. Options
 
-Two options can be passed along with the method or set ahead of time for all inFieldLabel controls.
+Five options can be passed along with the method or set ahead of time for all inFieldLabel controls.
 
 To set them ahead of time, use the following syntax:
 
@@ -60,13 +72,22 @@ To set them ahead of time, use the following syntax:
 
 To pass them at call time, use the following syntax:
 
-<pre>$("label").inFieldLabels({ optionName:value });</pre>
+<pre>$("label").inFieldLabels({ optionName: value });</pre>
 
 *<code>fadeOpacity:</code> Value between 0.1 and 1.0.*
-When a field is focussed, its label is animated to this opacity. Defaults to 0.5
+When a field is focussed, its label is animated to this opacity. Defaults to <code>0.5</code>
 
 *<code>fadeDuration:</code> Time in milliseconds*
-When an animation occurs, it uses this setting to determine duration. Defaults to 300
+When an animation occurs, it uses this setting to determine duration. Defaults to <code>300</code>
+
+*<code>labelClass:</code> String (CSS class to be applied to the label)*
+When the label becomes in-field, this class is applied to the label. This allows fallback styling for label that will not be in-field, for various reasons (inelligible, JavaScript is disabled, an error occured…). Defaults to 'in-field'
+
+*<code>disableAutocomplete:</code> Boolean*
+If <code>true</code>, disable browser auto-complete: the matching field gets <code>autocomplete=off</code>, which prevents some overlay errors when the field is still focused. Defaults to <code>true</code>
+
+*<code>emptyWatch:</code> Boolean*
+If <code>true</code>, keep watching the field as the user types. This allows the plugin to bring back the label as soon as it is empty, which prevents some overlay errors when the field is still focused. Defaults to <code>true</code>
 
 h2. Paste Support via "esumerfd":http://github.com/esumerfd
 
@@ -76,9 +97,33 @@ Note that the implementation just clears the label blindly. No check is made for
 
 * When the paste event fires the data has not be entered into the text field value yet so any comparison with empty will fail anyway.
 
-*  The worst case senario would be the pasting of a single space to the text field. There is no way to copy/cut an empty string so all a user can do is paste a single space which should remove the label anyway.
+* The worst case senario would be the pasting of a single space to the text field. There is no way to copy/cut an empty string so all a user can do is paste a single space which should remove the label anyway.
+
+h2. Placeholders
+
+Placeholder is a cool feature for HTML5 inputs and textareas that let you specify a sample/advice text in the form field when the user has not typed anything in. It is semantically different from in-field label (and so should have different markup). The role of a placeholder is to suggest an example of input, or give a hint on the format. For instance, you would have a label "date of birth" and a placeholder of "MM-DD-YYYY".
+ 
+Current browser implementations of placeholder *empty the field as soon as it gains focus*, as the "W3C specification":http://www.w3.org/TR/html5/common-input-element-attributes.html#attr-input-placeholder states, "except for Safari":http://instanceof.me/post/15394689493/safari-placeholder-better-than-the-w3c-specs (not Chrome).
+
+If a <code>placeholder</code> attribute is present on the field referenced by the label, the plugin is not applied to that label, thus preventing the overlap. Even if placeholders are not supported by the browser, to ensure interface consistency.
 
 h2. Changelog
+
+*Version 0.2* by "Adrien Lavoillotte":http://instanceof.me/ / "streetpc":http://github.com/streetpc/
+
+* Refactored the plugin into a state machine with unified event handling and transitions.
+
+* Faster selection and invalidation, supports IDs with special characters.
+
+* Added support for different CSS styling, <tt>labelClass</tt> option. _Special thanks to "Trevor Davis":http://www.viget.com/inspire/a-better-jquery-in-field-label-plugin/ / "davist11":https://github.com/davist11/ for this idea._
+
+* Restore label as soon as the field is empty, <tt>emptyWatch</tt> option, support for a <tt>cut</tt> event.
+
+* Less cases for autocomplete bug (keyup), plus <tt>disableAutocomplete</tt> option.
+
+* Avoid placeholder overlap.
+
+* Added support for other HTML5 text fields: <tt>number</tt>, <tt>date</tt>, <tt>time</tt>, <tt>datetime</tt>, <tt>datetime-local</tt>, <tt>month</tt>, <tt>week</tt>.
 
 *Version 0.1.2*
 
@@ -91,3 +136,13 @@ h2. Changelog
 *Version 0.1*
 
 * Initial Release
+
+h2. To Do
+
+* "“À la Safari” placeholder":http://instanceof.me/post/15394689493/safari-placeholder-better-than-the-w3c-specs polyfill if the browser doesn't support placeholders. Technically the same behavior, so we could just wrap the matched field, prepend a <code>&lt;label&gt;</code> and apply the plugin.
+
+* Detect Safari and inject the <code>label</code> content into the <code>placeholder</code> attribute of the targeted field, since a native implementation will be faster and cleaner.
+
+* Offer a <code>setInterval</code> implementation, with automatic label collecting and no keyup (un)binding.
+
+* Legacy jQuery support (and possibly performance gain) by setting a flag (say, <code>base.focus</code>) to <code>true</code> on focus and to <code>false</code> on blur. Use this flag instead of the <code>base.$field.is(':focus')</code> test. The rest of the code should work with jQuery 1.4+, maybe even 1.3+.

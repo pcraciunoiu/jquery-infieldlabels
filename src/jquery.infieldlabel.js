@@ -1,32 +1,34 @@
 /**
  * @license In-Field Label jQuery Plugin
  * http://fuelyourcoding.com/scripts/infield.html
+ * http://github.com/streetpc/jquery-infieldlabels
  *
- * Copyright (c) 2009-2010 Doug Neiner
- * Dual licensed under the MIT and GPL licenses.
- * Uses the same license as jQuery, see:
+ * Copyright (c) 2009 Doug Neiner, Adrien Lavoillotte
+ * Dual licensed under the MIT and GPL licenses, see:
  * http://docs.jquery.com/License
  *
- * @version 0.1.2
+ * @version 0.2
  */
 (function ($) {
 
-  // private state constants
+  // private constants
+  //  - states
   var BLUR = 0, // field is empty & unfocused
       FOCUS = 1, // field is empty & focused
-      NOT_EMPTY = 2; // field is not empty
-  // accepted input type 
-  var INPUT_TYPE = /^(?:text|password|search|number|tel|url|email|date(?:time(?:-local)?)?|time|month|week)?$/;
+      NOT_EMPTY = 2, // field is not empty
+  //  - accepted input type 
+      INPUT_TYPE = /^(?:text|password|search|number|tel|url|email|date(?:time(?:-local)?)?|time|month|week)?$/,
+  //  - state transitions
+      T = function(from, to) { return (from << 3) | to; },
+      TRANSITIONS = {};
   
-  // private transitions -- same for all instances
-  var t = function(from, to) { return (from << 3) | to; },
-      transitions = {};
-  transitions[t( FOCUS, BLUR )]      = function(base) { base.fadeTo(1.0); };
-  transitions[t( NOT_EMPTY, BLUR )]  = function(base) { base.$label.css({opacity: 1.0}).show(); base.emptied(true); };
-  transitions[t( BLUR, FOCUS )]      = function(base) { base.fadeTo(base.options.fadeOpacity); };
-  transitions[t( NOT_EMPTY, FOCUS )] = function(base) { base.$label.css({opacity: base.options.fadeOpacity}).show(); base.emptied(true); };
-  transitions[t( BLUR, NOT_EMPTY )]  = function(base) { base.$label.hide(); base.emptied(false); };
-  transitions[t( FOCUS, NOT_EMPTY )] = transitions[t( BLUR, NOT_EMPTY )];
+  // init transitions
+  TRANSITIONS[T( FOCUS, BLUR )]      = function(base) { base.fadeTo(1.0); };
+  TRANSITIONS[T( NOT_EMPTY, BLUR )]  = function(base) { base.$label.css({opacity: 1.0}).show(); base.emptied(true); };
+  TRANSITIONS[T( BLUR, FOCUS )]      = function(base) { base.fadeTo(base.options.fadeOpacity); };
+  TRANSITIONS[T( NOT_EMPTY, FOCUS )] = function(base) { base.$label.css({opacity: base.options.fadeOpacity}).show(); base.emptied(true); };
+  TRANSITIONS[T( BLUR, NOT_EMPTY )]  = function(base) { base.$label.hide(); base.emptied(false); };
+  TRANSITIONS[T( FOCUS, NOT_EMPTY )] = TRANSITIONS[T( BLUR, NOT_EMPTY )];
 
   $.InFieldLabels = function (label, field, options) {
     // To avoid scope issues, use 'base' instead of 'this'
@@ -103,7 +105,7 @@
         return;
       }
 
-      var transition = transitions[t(base.state, state)];
+      var transition = TRANSITIONS[T(base.state, state)];
       if (typeof transition === 'function') {
         transition(base);
         base.state = state;
