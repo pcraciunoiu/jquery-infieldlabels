@@ -15,6 +15,8 @@
   var BLUR = 0, // field is empty & unfocused
       FOCUS = 1, // field is empty & focused
       NOT_EMPTY = 2; // field is not empty
+  // accepted input type 
+  var INPUT_TYPE = /^(?:text|password|search|number|tel|url|email|date(?:time(?:-local)?)?|time|month|week)?$/;
   
   // private transitions -- same for all instances
   var t = function(from, to) { return (from << 3) | to; },
@@ -47,6 +49,9 @@
 
       if (base.options.inlineClass) {
         base.$label.addClass(base.options.inlineClass);
+      }
+      if (base.options.disableAutocomplete) {
+        base.$field.attr('autocomplete', 'off');
       }
 
       base.$field.on('blur focus change keyup paste', base.updateState);
@@ -99,6 +104,7 @@
   };
 
   $.InFieldLabels.defaultOptions = {
+    disableAutocomplete: true, // Disable autocomplete on the matched fields
     fadeOpacity: 0.5, // Once a field has focus, how transparent should the label be
     fadeDuration: 300, // How long should it take to animate from 1.0 opacity to the fadeOpacity
     inlineClass: 'in-field' // CSS class to apply to the label when it gets in-field
@@ -125,7 +131,7 @@
       }
 
       if (field.tagName === 'INPUT') {
-        valid = /^(?:text|search|number|tel|url|email|password)?$/.test(field.type.toLowerCase());
+        valid = INPUT_TYPE.test(field.type.toLowerCase());
       } else if (field.tagName !== 'TEXTAREA') {
         valid = false;
       }
