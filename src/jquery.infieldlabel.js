@@ -54,7 +54,10 @@
         base.$field.attr('autocomplete', 'off');
       }
 
-      base.$field.on('blur focus change keyup.infield paste', base.updateState);
+      base.$field
+          .on('blur focus change keyup.infield cut', base.updateState)
+          // paste cannot be empty
+          .on('paste', function(e){ base.setState(NOT_EMPTY); });
       
       base.updateState();
     };
