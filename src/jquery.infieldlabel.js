@@ -22,10 +22,10 @@
   var t = function(from, to) { return (from << 3) | to; },
       transitions = {};
   transitions[t( FOCUS, BLUR )]      = function(base) { base.fadeTo(1.0); };
-  transitions[t( NOT_EMPTY, BLUR )]  = function(base) { base.$label.css({opacity: 1.0}).show(); };
+  transitions[t( NOT_EMPTY, BLUR )]  = function(base) { base.$label.css({opacity: 1.0}).show(); base.emptied(true); };
   transitions[t( BLUR, FOCUS )]      = function(base) { base.fadeTo(base.options.fadeOpacity); };
-  transitions[t( NOT_EMPTY, FOCUS )] = function(base) { base.$label.css({opacity: base.options.fadeOpacity}).show(); };
-  transitions[t( BLUR, NOT_EMPTY )]  = function(base) { base.$label.hide(); };
+  transitions[t( NOT_EMPTY, FOCUS )] = function(base) { base.$label.css({opacity: base.options.fadeOpacity}).show(); base.emptied(true); };
+  transitions[t( BLUR, NOT_EMPTY )]  = function(base) { base.$label.hide(); base.emptied(false); };
   transitions[t( FOCUS, NOT_EMPTY )] = transitions[t( BLUR, NOT_EMPTY )];
 
   $.InFieldLabels = function (label, field, options) {
@@ -54,11 +54,22 @@
         base.$field.attr('autocomplete', 'off');
       }
 
-      base.$field.on('blur focus change keyup paste', base.updateState);
+      base.$field.on('blur focus change keyup.infield paste', base.updateState);
       
       base.updateState();
     };
 
+    base.emptied = function(empty) {
+      if (!base.options.emptyWatch) {
+        if (empty) {
+          // namespace ensures we unbind only our handler
+          base.$field.on('keyup.infield', base.updateState);
+        } else {
+          // save CPU but won't detect empty until blur
+          base.$field.off('keyup.infield', base.updateState);
+        }
+      }
+    };
 
     base.fadeTo = function (opacity) {
       if (!base.options.fadeDuration) {
@@ -104,6 +115,7 @@
   };
 
   $.InFieldLabels.defaultOptions = {
+    emptyWatch: true, // Keep watching the field as the user types (slower but brings back the label immediately when the field is emptied)
     disableAutocomplete: true, // Disable autocomplete on the matched fields
     fadeOpacity: 0.5, // Once a field has focus, how transparent should the label be
     fadeDuration: 300, // How long should it take to animate from 1.0 opacity to the fadeOpacity
