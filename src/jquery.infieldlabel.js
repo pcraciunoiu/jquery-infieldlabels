@@ -49,9 +49,7 @@
         base.$label.addClass(base.options.inlineClass);
       }
 
-      base.$field.focus(base.onFocus).blur(base.onBlur)
-        // is(':focus') is costlier
-        .on('change keyup paste', base.updateState);
+      base.$field.on('blur focus change keyup paste', base.updateState);
       
       base.updateState();
     };
@@ -61,17 +59,18 @@
       base.$label.stop().animate({ opacity: opacity }, base.options.fadeDuration);
     };
 
-    base.onFocus = function (e) {
-      base.setState(base.field.value === '' ? FOCUS : NOT_EMPTY);
-    }
-    base.onBlur = function (e) {
-      base.setState(base.field.value === '' ? BLUR : NOT_EMPTY);
-    }
-
     base.updateState = function (e, nl) {
       var state = NOT_EMPTY;
       if (base.field.value === '') {
-        state = base.$field.is(':focus') ? FOCUS : BLUR;
+        var focus = e && e.type;
+        if (focus === 'focus' || focus === 'keyup') {
+          focus = true;
+        } else if (focus === 'blur' || focus === 'change') {
+          focus = false;
+        } else {  // last resort because slowest
+          focus = base.$field.is(':focus');
+        }
+        state = focus ? FOCUS : BLUR;
       }
       base.setState(state, nl);
     };
