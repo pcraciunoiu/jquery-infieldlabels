@@ -56,7 +56,11 @@
 
 
     base.fadeTo = function (opacity) {
-      base.$label.stop().animate({ opacity: opacity }, base.options.fadeDuration);
+      if (!base.options.fadeDuration) {
+        base.$label.css({ opacity: opacity });
+      } else {
+        base.$label.stop().animate({ opacity: opacity }, base.options.fadeDuration);
+      }
     };
 
     base.updateState = function (e, nl) {
