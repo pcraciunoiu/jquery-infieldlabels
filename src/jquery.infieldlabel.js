@@ -55,9 +55,9 @@
       }
 
       base.$field
-          .on('blur focus change keyup.infield cut', base.updateState)
+          .bind('blur focus change keyup.infield cut', base.updateState)
           // paste cannot be empty
-          .on('paste', function(e){ base.setState(NOT_EMPTY); });
+          .bind('paste', function(e){ base.setState(NOT_EMPTY); });
       
       base.updateState();
     };
@@ -66,10 +66,10 @@
       if (!base.options.emptyWatch) {
         if (empty) {
           // namespace ensures we unbind only our handler
-          base.$field.on('keyup.infield', base.updateState);
+          base.$field.bind('keyup.infield', base.updateState);
         } else {
           // save CPU but won't detect empty until blur
-          base.$field.off('keyup.infield', base.updateState);
+          base.$field.unbind('keyup.infield', base.updateState);
         }
       }
     };
