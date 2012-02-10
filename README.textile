@@ -50,8 +50,12 @@ h3. CSS
 More CSS is needed to position the label nicely over the input or text area element, but since it all depends on how you have styled those elements, only the bare-bones are listed here. Keep in mind any block element can surround the label and input field. <code>&lt;p&gt;</code> is used as an example.
 
 <pre>
-form p { position:relative }
-label.in-field { position:absolute; top:0; left:0; cursor:text }
+form p { position: relative }
+label.in-field {
+  position: absolute;
+  top: 0; left: 0;
+  cursor: text;
+  pointer-events: none; }
 </pre>
 
 h3. Javascript
