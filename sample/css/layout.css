@@ -9,7 +9,7 @@ body {
 	margin: 0 auto;
 	padding: 0 0 40px 0;
 	background: #eee;
-font-family: Helvetica, Arial;
+	font-family: Helvetica, Arial;
 }
 
 h1 {
@@ -74,7 +74,12 @@ form, form fieldset input, form fieldset textarea, form label {
 	font-size: 12pt;
 }
 form p { position: relative; margin: 10px 0;}
-form p label.in-field { position: absolute; top: 0; left: 0; cursor: text;}
+form p label.in-field {
+	position: absolute;
+	top: 0; left: 0;
+	cursor: text;
+	pointer-events: none;
+}
 form p br {display: none;}
 
 
