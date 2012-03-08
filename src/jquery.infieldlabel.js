@@ -7,7 +7,7 @@
  * Dual licensed under the MIT and GPL licenses, see:
  * http://docs.jquery.com/License
  *
- * @version 0.2
+ * @version 0.2.1
  */
 (function ($) {
 
@@ -136,7 +136,8 @@
       // Find input or textarea based on for= attribute
       // The for attribute on the label must contain the ID
       // of the input or textarea element
-      var for_attr = this.getAttribute('for'), field, valid = true;
+      var for_attr = this.getAttribute('for') || this.htmlFor,
+          field, valid = true;
       if (!for_attr) {
         return; // Nothing to attach, since the for field wasn't used
       }

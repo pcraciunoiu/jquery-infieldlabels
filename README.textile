@@ -1,6 +1,6 @@
 h1. In-Field Labels jQuery Plugin
 
-*Version:* 0.2.0
+*Version:* 0.2.1
 
 *License:* "Same as jQuery (Dual GPL + MIT)":http://docs.jquery.com/License
 
@@ -112,6 +112,10 @@ Current browser implementations of placeholder *empty the field as soon as it ga
 If a <code>placeholder</code> attribute is present on the field referenced by the label, the plugin is not applied to that label, thus preventing the overlap. Even if placeholders are not supported by the browser, to ensure interface consistency.
 
 h2. Changelog
+
+*Version 0.2.1*
+
+* Fixed a bug with IE7 that caused the <tt>label</tt>'s <tt>for</tt> attribute to be considered empty.
 
 *Version 0.2* by "Adrien Lavoillotte":http://instanceof.me/ / "streetpc":http://github.com/streetpc/
 

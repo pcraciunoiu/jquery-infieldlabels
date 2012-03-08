@@ -132,6 +132,10 @@ $("label").inFieldLabels({ optionName: value });</pre>
 <p><code>emptyWatch:</code> <strong>Boolean</strong><br />If <code>true</code>, keep watching the field as the user types. This allows the plugin to bring back the label as soon as it is empty, which prevents some overlay errors when the field is still focused. Defaults to <code>true</code></p>
 
 		<h2>Changelog</h2>
+		<p><strong>Version 0.2.1</strong></p>
+		<ul>
+			<li>Fixed a bug with IE7 that caused the <tt>label</tt>'s <tt>for</tt> attribute to be considered empty.</li>
+		</ul>
 		<p><strong>Version 0.2</strong>, by <a href="http://instanceof.me/">Adrien Lavoillotte</a> (<a href="http://github.com/streetpc/">streetpc</a>)</p>
 		<ul>
 			<li>Refactored the plugin into a state machine with unified event handling and transitions.</li>
