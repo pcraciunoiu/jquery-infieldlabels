@@ -82,7 +82,11 @@ To pass them at call time, use the following syntax:
 When a field is focussed, its label is animated to this opacity. Defaults to <code>0.5</code>
 
 *<code>fadeDuration:</code> Time in milliseconds*
-When an animation occurs, it uses this setting to determine duration. Defaults to <code>300</code>
+When the field gets or loses focus, it uses this setting to determine duration of the fade. Defaults to <code>300</code>
+
+*<code>showHideDuration:</code> Time in milliseconds*
+When the label is shown or hidden, it uses this setting to determine duration. Defaults to <code>300</code>
+
 
 *<code>labelClass:</code> String (CSS class to be applied to the label)*
 When the label becomes in-field, this class is applied to the label. This allows fallback styling for label that will not be in-field, for various reasons (inelligible, JavaScript is disabled, an error occured…). Defaults to 'in-field'

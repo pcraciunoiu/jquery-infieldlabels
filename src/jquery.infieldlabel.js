@@ -24,10 +24,10 @@
   
   // init transitions
   TRANSITIONS[T( FOCUS, BLUR )]      = function(base) { base.fadeTo(1.0); };
-  TRANSITIONS[T( NOT_EMPTY, BLUR )]  = function(base) { base.$label.css({opacity: 1.0}).show(); base.emptied(true); };
+  TRANSITIONS[T( NOT_EMPTY, BLUR )]  = function(base) { base.$label.css({opacity: 1.0}).fadeIn(base.options.showHideDuration); base.emptied(true); };
   TRANSITIONS[T( BLUR, FOCUS )]      = function(base) { base.fadeTo(base.options.fadeOpacity); };
   TRANSITIONS[T( NOT_EMPTY, FOCUS )] = function(base) { base.$label.css({opacity: base.options.fadeOpacity}).show(); base.emptied(true); };
-  TRANSITIONS[T( BLUR, NOT_EMPTY )]  = function(base) { base.$label.hide(); base.emptied(false); };
+  TRANSITIONS[T( BLUR, NOT_EMPTY )]  = function(base) { base.$label.fadeOut(base.options.showHideDuration); base.emptied(false); };
   TRANSITIONS[T( FOCUS, NOT_EMPTY )] = TRANSITIONS[T( BLUR, NOT_EMPTY )];
 
   $.InFieldLabels = function (label, field, options) {
@@ -124,6 +124,7 @@
     disableAutocomplete: true, // Disable autocomplete on the matched fields
     fadeOpacity: 0.5, // Once a field has focus, how transparent should the label be
     fadeDuration: 300, // How long should it take to animate from 1.0 opacity to the fadeOpacity
+    showHideDuration: 300, // How long should it take to animate from fadeOpacity to 0 and 0 to 1 (show/hide label)
     labelClass: 'in-field' // CSS class to apply to the label when it gets in-field
   };
 
